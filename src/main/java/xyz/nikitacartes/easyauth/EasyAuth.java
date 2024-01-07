@@ -12,7 +12,7 @@ import net.minecraft.util.Identifier;
 import xyz.nikitacartes.easyauth.commands.*;
 import xyz.nikitacartes.easyauth.config.*;
 import xyz.nikitacartes.easyauth.event.AuthEventHandler;
-import xyz.nikitacartes.easyauth.storage.PlayerCache;
+import xyz.nikitacartes.easyauth.storage.PlayerCacheV0;
 import xyz.nikitacartes.easyauth.storage.database.*;
 
 import java.io.File;
@@ -37,9 +37,9 @@ public class EasyAuth implements ModInitializer {
     /**
      * HashMap of players that have joined the server.
      * It's cleared on server stop in order to save some interactions with database during runtime.
-     * Stores their data as {@link PlayerCache PlayerCache} object.
+     * Stores their data as {@link PlayerCacheV0 PlayerCacheV0} object.
      */
-    public static final HashMap<String, PlayerCache> playerCacheMap = new HashMap<>();
+    public static final HashMap<String, PlayerCacheV0> playerCacheMap = new HashMap<>();
 
     /**
      * HashSet of player names that have Mojang accounts.

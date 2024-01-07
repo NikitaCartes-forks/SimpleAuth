@@ -18,7 +18,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import xyz.nikitacartes.easyauth.event.AuthEventHandler;
-import xyz.nikitacartes.easyauth.storage.PlayerCache;
+import xyz.nikitacartes.easyauth.storage.PlayerCacheV0;
 import xyz.nikitacartes.easyauth.utils.*;
 
 import static xyz.nikitacartes.easyauth.EasyAuth.*;
@@ -37,7 +37,7 @@ public abstract class ServerPlayerEntityMixin implements PlayerAuth {
 
     @Override
     public void easyAuth$saveLastLocation() {
-        PlayerCache cache = playerCacheMap.get(this.easyAuth$getFakeUuid());
+        PlayerCacheV0 cache = playerCacheMap.get(this.easyAuth$getFakeUuid());
         if (cache == null) {
             LogDebug("Player cache is null, not saving position.");
             return;
@@ -58,7 +58,7 @@ public abstract class ServerPlayerEntityMixin implements PlayerAuth {
         if (!config.hidePlayerCoords) {
             return;
         }
-        PlayerCache cache = playerCacheMap.get(this.easyAuth$getFakeUuid());
+        PlayerCacheV0 cache = playerCacheMap.get(this.easyAuth$getFakeUuid());
         if (cache == null) {
             LogDebug("Player cache is null, not saving position.");
             return;
@@ -122,7 +122,7 @@ public abstract class ServerPlayerEntityMixin implements PlayerAuth {
      */
     @Override
     public void easyAuth$sendAuthMessage() {
-        final PlayerCache cache = playerCacheMap.get(((PlayerAuth) player).easyAuth$getFakeUuid());
+        final PlayerCacheV0 cache = playerCacheMap.get(((PlayerAuth) player).easyAuth$getFakeUuid());
         if (!config.enableGlobalPassword && (cache == null || cache.password.isEmpty())) {
             langConfig.registerRequired.send(player);
         } else {
@@ -171,8 +171,8 @@ public abstract class ServerPlayerEntityMixin implements PlayerAuth {
      */
     @Override
     public void easyAuth$setAuthenticated(boolean authenticated) {
-        PlayerCache playerCache = playerCacheMap.get(this.easyAuth$getFakeUuid());
-        playerCache.isAuthenticated = authenticated;
+        PlayerCacheV0 playerCacheV0 = playerCacheMap.get(this.easyAuth$getFakeUuid());
+        playerCacheV0.isAuthenticated = authenticated;
 
         player.setInvulnerable(!authenticated && extendedConfig.playerInvulnerable);
         player.setInvisible(!authenticated && extendedConfig.playerIgnored);
@@ -180,15 +180,13 @@ public abstract class ServerPlayerEntityMixin implements PlayerAuth {
         if (authenticated) {
             kickTimer = config.kickTimeout * 20;
             // Updating blocks if needed (in case if portal rescue action happened)
-            if (playerCache.wasInPortal) {
-                World world = player.getEntityWorld();
-                BlockPos pos = player.getBlockPos();
+            World world = player.getEntityWorld();
+            BlockPos pos = player.getBlockPos();
 
-                // Sending updates to portal blocks
-                // This is technically not needed, but it cleans the "messed portal" on the client
-                world.updateListeners(pos, world.getBlockState(pos), world.getBlockState(pos), 3);
-                world.updateListeners(pos.up(), world.getBlockState(pos.up()), world.getBlockState(pos.up()), 3);
-            }
+            // Sending updates to portal blocks
+            // This is technically not needed, but it cleans the "messed portal" on the client
+            world.updateListeners(pos, world.getBlockState(pos), world.getBlockState(pos), 3);
+            world.updateListeners(pos.up(), world.getBlockState(pos.up()), world.getBlockState(pos.up()), 3);
         }
     }
 

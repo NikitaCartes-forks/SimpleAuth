@@ -25,7 +25,7 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 import xyz.nikitacartes.easyauth.event.AuthEventHandler;
-import xyz.nikitacartes.easyauth.storage.PlayerCache;
+import xyz.nikitacartes.easyauth.storage.PlayerCacheV0;
 import xyz.nikitacartes.easyauth.utils.PlayerAuth;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -61,10 +61,10 @@ public abstract class PlayerManagerMixin {
             at = @At("STORE"), ordinal = 0)
     private RegistryKey<World> onPlayerConnect(RegistryKey<World> world, ClientConnection connection, ServerPlayerEntity player, ConnectedClientData clientData) {
         String uuid = ((PlayerAuth) player).easyAuth$getFakeUuid();
-        PlayerCache cache;
+        PlayerCacheV0 cache;
         if (!playerCacheMap.containsKey(uuid)) {
             // First join
-            cache = PlayerCache.fromJson(player, uuid);
+            cache = PlayerCacheV0.fromJson(player, uuid);
             playerCacheMap.put(uuid, cache);
         }
         if (config.hidePlayerCoords && !(hasValidSession(player, connection))) {
@@ -77,7 +77,7 @@ public abstract class PlayerManagerMixin {
             at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayNetworkHandler;requestTeleport(DDDFF)V"))
     private void onPlayerConnect(Args args, ClientConnection connection, ServerPlayerEntity player, ConnectedClientData clientData) {
         if (config.hidePlayerCoords && !(hasValidSession(player, connection))) {
-            PlayerCache cache = playerCacheMap.get(((PlayerAuth) player).easyAuth$getFakeUuid());
+            PlayerCacheV0 cache = playerCacheMap.get(((PlayerAuth) player).easyAuth$getFakeUuid());
             ((PlayerAuth) player).easyAuth$saveLastLocation();
 
             LogDebug(String.format("Teleporting player %s", ((PlayerAuth) player).easyAuth$getFakeUuid()));

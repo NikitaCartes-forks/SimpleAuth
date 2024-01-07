@@ -1,6 +1,6 @@
 package xyz.nikitacartes.easyauth.storage.database;
 
-import xyz.nikitacartes.easyauth.storage.PlayerCache;
+import xyz.nikitacartes.easyauth.storage.PlayerCacheV0;
 
 import java.util.HashMap;
 
@@ -68,5 +68,5 @@ public interface DbApi {
      */
     HashMap<String, String> getAllData();
 
-    void saveAll(HashMap<String, PlayerCache> playerCacheMap);
+    void saveAll(HashMap<String, PlayerCacheV0> playerCacheMap);
 }

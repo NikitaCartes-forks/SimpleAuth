@@ -11,7 +11,7 @@ import com.mongodb.client.model.InsertOneModel;
 import com.mongodb.client.model.ReplaceOneModel;
 import org.bson.Document;
 import xyz.nikitacartes.easyauth.config.StorageConfigV1;
-import xyz.nikitacartes.easyauth.storage.PlayerCache;
+import xyz.nikitacartes.easyauth.storage.PlayerCacheV0;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -87,7 +87,7 @@ public class MongoDB implements DbApi {
         return registeredPlayers;
     }
 
-    public void saveAll(HashMap<String, PlayerCache> playerCacheMap) {
+    public void saveAll(HashMap<String, PlayerCacheV0> playerCacheMap) {
         List<InsertOneModel<Document>> writeList = new ArrayList<>();
         List<ReplaceOneModel<Document>> updateList = new ArrayList<>();
         playerCacheMap.forEach((uuid, playerCache) -> {

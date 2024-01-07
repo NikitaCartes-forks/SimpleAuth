@@ -2,7 +2,7 @@ package xyz.nikitacartes.easyauth.storage.database;
 
 import com.mysql.cj.jdbc.exceptions.CommunicationsException;
 import xyz.nikitacartes.easyauth.config.StorageConfigV1;
-import xyz.nikitacartes.easyauth.storage.PlayerCache;
+import xyz.nikitacartes.easyauth.storage.PlayerCacheV0;
 
 import java.sql.*;
 import java.util.HashMap;
@@ -208,7 +208,7 @@ public class MySQL implements DbApi {
         return registeredPlayers;
     }
 
-    public void saveAll(HashMap<String, PlayerCache> playerCacheMap) {
+    public void saveAll(HashMap<String, PlayerCacheV0> playerCacheMap) {
         try {
             reConnect();
             PreparedStatement preparedStatement = MySQLConnection.prepareStatement("INSERT INTO " + config.mysql.mysqlTable + " (uuid, data) VALUES (?, ?) ON DUPLICATE KEY UPDATE data = ?;");
