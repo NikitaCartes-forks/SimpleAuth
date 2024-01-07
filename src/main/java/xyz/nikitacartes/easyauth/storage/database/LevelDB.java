@@ -6,7 +6,7 @@ import org.iq80.leveldb.Options;
 import org.iq80.leveldb.WriteBatch;
 import xyz.nikitacartes.easyauth.EasyAuth;
 import xyz.nikitacartes.easyauth.config.StorageConfigV1;
-import xyz.nikitacartes.easyauth.storage.PlayerCache;
+import xyz.nikitacartes.easyauth.storage.PlayerCacheV0;
 
 import java.io.File;
 import java.io.IOException;
@@ -161,7 +161,7 @@ public class LevelDB implements DbApi {
         return registeredPlayers;
     }
 
-    public void saveAll(HashMap<String, PlayerCache> playerCacheMap) {
+    public void saveAll(HashMap<String, PlayerCacheV0> playerCacheMap) {
         WriteBatch batch = levelDBStore.createWriteBatch();
         // Updating player data.
         playerCacheMap.forEach((uuid, playerCache) -> {

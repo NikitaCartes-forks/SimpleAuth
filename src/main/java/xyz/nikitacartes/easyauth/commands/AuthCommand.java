@@ -18,7 +18,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.Uuids;
 import xyz.nikitacartes.easyauth.EasyAuth;
 import xyz.nikitacartes.easyauth.config.deprecated.AuthConfig;
-import xyz.nikitacartes.easyauth.storage.PlayerCache;
+import xyz.nikitacartes.easyauth.storage.PlayerCacheV0;
 import xyz.nikitacartes.easyauth.storage.database.DBApiException;
 import xyz.nikitacartes.easyauth.utils.AuthHelper;
 import xyz.nikitacartes.easyauth.utils.PlayerAuth;
@@ -31,7 +31,7 @@ import static com.mojang.brigadier.arguments.StringArgumentType.*;
 import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;
 import static xyz.nikitacartes.easyauth.EasyAuth.*;
-import static xyz.nikitacartes.easyauth.storage.PlayerCache.gson;
+import static xyz.nikitacartes.easyauth.storage.PlayerCacheV0.gson;
 import static xyz.nikitacartes.easyauth.utils.EasyLogger.*;
 
 public class AuthCommand {
@@ -264,14 +264,14 @@ public class AuthCommand {
      */
     private static int registerUser(ServerCommandSource source, String uuid, String password) {
         THREADPOOL.submit(() -> {
-            PlayerCache playerCache;
+            PlayerCacheV0 playerCacheV0;
             if (playerCacheMap.containsKey(uuid)) {
-                playerCache = playerCacheMap.get(uuid);
+                playerCacheV0 = playerCacheMap.get(uuid);
             } else {
-                playerCache = PlayerCache.fromJson(null, uuid);
+                playerCacheV0 = PlayerCacheV0.fromJson(null, uuid);
             }
 
-            playerCacheMap.put(uuid, playerCache);
+            playerCacheMap.put(uuid, playerCacheV0);
             playerCacheMap.get(uuid).password = AuthHelper.hashPassword(password.toCharArray());
 
             langConfig.userdataUpdated.send(source);
@@ -289,14 +289,14 @@ public class AuthCommand {
      */
     private static int updatePassword(ServerCommandSource source, String uuid, String password) {
         THREADPOOL.submit(() -> {
-            PlayerCache playerCache;
+            PlayerCacheV0 playerCacheV0;
             if (playerCacheMap.containsKey(uuid)) {
-                playerCache = playerCacheMap.get(uuid);
+                playerCacheV0 = playerCacheMap.get(uuid);
             } else {
-                playerCache = PlayerCache.fromJson(null, uuid);
+                playerCacheV0 = PlayerCacheV0.fromJson(null, uuid);
             }
 
-            playerCacheMap.put(uuid, playerCache);
+            playerCacheMap.put(uuid, playerCacheV0);
             if (playerCacheMap.get(uuid).password.isEmpty()) {
                 langConfig.userNotRegistered.send(source);
                 return;
@@ -336,7 +336,7 @@ public class AuthCommand {
                 AtomicInteger i = new AtomicInteger();
                 MutableText message = langConfig.registeredPlayers.get();
                 DB.getAllData().forEach((uuid, playerCache) -> {
-                    if (!playerCache.isEmpty() && !gson.fromJson(playerCache, PlayerCache.class).password.isEmpty()) {
+                    if (!playerCache.isEmpty() && !gson.fromJson(playerCache, PlayerCacheV0.class).password.isEmpty()) {
                         i.getAndIncrement();
                         message.append(Text.translatable("\n" + i + ": [" + uuid + "]")
                                 .setStyle(Style.EMPTY.withClickEvent(

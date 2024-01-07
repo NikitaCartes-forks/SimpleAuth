@@ -16,7 +16,7 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.Uuids;
 import net.minecraft.util.math.BlockPos;
-import xyz.nikitacartes.easyauth.storage.PlayerCache;
+import xyz.nikitacartes.easyauth.storage.PlayerCacheV0;
 import xyz.nikitacartes.easyauth.utils.FloodgateApiHelper;
 import xyz.nikitacartes.easyauth.utils.PlayerAuth;
 
@@ -68,9 +68,9 @@ public class AuthEventHandler {
                 return null;
             }
             String incomingPlayerUuid = profile.getId().toString();
-            PlayerCache playerCache = playerCacheMap.containsKey(incomingPlayerUuid) ?
-                    playerCacheMap.get(incomingPlayerUuid) : PlayerCache.fromJson(null, incomingPlayerUuid);
-            if (playerCache.lastKicked >= System.currentTimeMillis() - 1000 * config.resetLoginAttemptsTimeout) {
+            PlayerCacheV0 playerCacheV0 = playerCacheMap.containsKey(incomingPlayerUuid) ?
+                    playerCacheMap.get(incomingPlayerUuid) : PlayerCacheV0.fromJson(null, incomingPlayerUuid);
+            if (playerCacheV0.lastKicked >= System.currentTimeMillis() - 1000 * config.resetLoginAttemptsTimeout) {
                 return langConfig.loginTriesExceeded.get();
             }
         }
@@ -88,18 +88,18 @@ public class AuthEventHandler {
         }
         // Checking if session is still valid
         String uuid = ((PlayerAuth) player).easyAuth$getFakeUuid();
-        PlayerCache playerCache;
+        PlayerCacheV0 playerCacheV0;
 
         if (!playerCacheMap.containsKey(uuid)) {
             // First join
-            playerCache = PlayerCache.fromJson(player, uuid);
-            playerCacheMap.put(uuid, playerCache);
+            playerCacheV0 = PlayerCacheV0.fromJson(player, uuid);
+            playerCacheMap.put(uuid, playerCacheV0);
         } else {
-            playerCache = playerCacheMap.get(uuid);
+            playerCacheV0 = playerCacheMap.get(uuid);
         }
-        if (playerCache.isAuthenticated &&
-                playerCache.validUntil >= System.currentTimeMillis() &&
-                player.getIp().equals(playerCache.lastIp)) {
+        if (playerCacheV0.isAuthenticated &&
+                playerCacheV0.validUntil >= System.currentTimeMillis() &&
+                player.getIp().equals(playerCacheV0.lastIp)) {
             // Valid session
             player.setInvulnerable(false);
             player.setInvisible(false);
@@ -125,8 +125,6 @@ public class AuthEventHandler {
 
                 BlockUpdateS2CPacket headPacket = new BlockUpdateS2CPacket(pos.up(), Blocks.AIR.getDefaultState());
                 player.networkHandler.sendPacket(headPacket);
-
-                playerCache.wasInPortal = true;
             }
         }
     }
@@ -135,13 +133,13 @@ public class AuthEventHandler {
         if (((PlayerAuth) player).easyAuth$canSkipAuth())
             return;
         String uuid = ((PlayerAuth) player).easyAuth$getFakeUuid();
-        PlayerCache playerCache = playerCacheMap.get(uuid);
+        PlayerCacheV0 playerCacheV0 = playerCacheMap.get(uuid);
 
-        if (playerCache != null && playerCache.isAuthenticated) {
-            playerCache.lastIp = player.getIp();
+        if (playerCacheV0 != null && playerCacheV0.isAuthenticated) {
+            playerCacheV0.lastIp = player.getIp();
 
             // Setting the session expire time
-            playerCache.validUntil = System.currentTimeMillis() + config.sessionTimeout * 1000L;
+            playerCacheV0.validUntil = System.currentTimeMillis() + config.sessionTimeout * 1000L;
         } else if (config.hidePlayerCoords) {
             ((PlayerAuth) player).easyAuth$restoreLastLocation();
 

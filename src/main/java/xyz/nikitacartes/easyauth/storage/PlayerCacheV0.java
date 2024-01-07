@@ -12,14 +12,17 @@ import xyz.nikitacartes.easyauth.event.AuthEventHandler;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static xyz.nikitacartes.easyauth.EasyAuth.*;
+import static xyz.nikitacartes.easyauth.EasyAuth.DB;
+import static xyz.nikitacartes.easyauth.EasyAuth.playerCacheMap;
 import static xyz.nikitacartes.easyauth.utils.EasyLogger.LogDebug;
 
 /**
  * Class used for storing the non-authenticated player's cache
  */
-public class PlayerCache {
+public class PlayerCacheV0 {
 
+    public static final Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+    public final LastLocation lastLocation = new LastLocation();
     /**
      * Whether player is authenticated.
      * Used for {@link AuthEventHandler#onPlayerJoin(ServerPlayerEntity) session validation}.
@@ -58,27 +61,56 @@ public class PlayerCache {
     @Expose
     @SerializedName("valid_until")
     public long validUntil;
-
-    /**
-     * Player stats before de-authentication.
-     */
-    @Expose
-    @SerializedName("was_in_portal")
-    public boolean wasInPortal = false;
-
     /**
      * Contains the UUID of the entity that the player was riding before leaving the server.
      */
     @Expose
     @SerializedName("riding_entity_uuid")
     public UUID ridingEntityUUID = null;
-
     /**
      * Whether player was dead
      */
     @Expose
     @SerializedName("was_dead")
     public boolean wasDead = false;
+
+    /**
+     * Creates an empty cache for player (when player doesn't exist in DB).
+     *
+     * @param player player to create cache for
+     */
+
+
+    public static PlayerCacheV0 fromJson(ServerPlayerEntity player, String fakeUuid) {
+        LogDebug(String.format("Creating cache for %s %s", player != null ? player.getGameProfile().getName() : null, fakeUuid));
+
+        String json = DB.getUserData(fakeUuid);
+        PlayerCacheV0 playerCacheV0;
+        if (!json.isEmpty()) {
+            // Parsing data from DB
+            playerCacheV0 = gson.fromJson(json, PlayerCacheV0.class);
+        } else playerCacheV0 = new PlayerCacheV0();
+        if (player != null) {
+            // Setting position cache
+            playerCacheV0.lastLocation.dimension = player.getServerWorld();
+            playerCacheV0.lastLocation.position = player.getPos();
+            playerCacheV0.lastLocation.yaw = player.getYaw();
+            playerCacheV0.lastLocation.pitch = player.getPitch();
+            playerCacheV0.ridingEntityUUID = player.getVehicle() != null ? player.getVehicle().getUuid() : null;
+            playerCacheV0.wasDead = player.isDead();
+        }
+
+        return playerCacheV0;
+    }
+
+    public static boolean isAuthenticated(String uuid) {
+        PlayerCacheV0 playerCacheV0 = playerCacheMap.get(uuid);
+        return (playerCacheV0 != null && playerCacheV0.isAuthenticated);
+    }
+
+    public String toJson() {
+        return gson.toJson(this);
+    }
 
     /**
      * Last recorded position before de-authentication.
@@ -90,55 +122,8 @@ public class PlayerCache {
         public float pitch;
 
         public String toString() {
-            return String.format("LastLocation{dimension=%s, position=%s, yaw=%s, pitch=%s}", dimension, position, yaw, pitch);
+            return String.format("LastLocation{dimension=%s, position=%s, yaw=%s, pitch=%s}", dimension, position,
+                    yaw, pitch);
         }
-    }
-
-    public final LastLocation lastLocation = new LastLocation();
-
-
-    public static final Gson gson = new GsonBuilder()
-            .excludeFieldsWithoutExposeAnnotation()
-            .create();
-
-    /**
-     * Creates an empty cache for player (when player doesn't exist in DB).
-     *
-     * @param player player to create cache for
-     */
-
-
-    public static PlayerCache fromJson(ServerPlayerEntity player, String fakeUuid) {
-        LogDebug(String.format("Creating cache for %s %s", player != null ? player.getGameProfile().getName() : null, fakeUuid));
-
-        String json = DB.getUserData(fakeUuid);
-        PlayerCache playerCache;
-        if (!json.isEmpty()) {
-            // Parsing data from DB
-            playerCache = gson.fromJson(json, PlayerCache.class);
-        } else
-            playerCache = new PlayerCache();
-        if (player != null) {
-            // Setting position cache
-            playerCache.lastLocation.dimension = player.getServerWorld();
-            playerCache.lastLocation.position = player.getPos();
-            playerCache.lastLocation.yaw = player.getYaw();
-            playerCache.lastLocation.pitch = player.getPitch();
-            playerCache.ridingEntityUUID = player.getVehicle() != null ? player.getVehicle().getUuid() : null;
-            playerCache.wasDead = player.isDead();
-
-            playerCache.wasInPortal = false;
-        }
-
-        return playerCache;
-    }
-
-    public String toJson() {
-        return gson.toJson(this);
-    }
-
-    public static boolean isAuthenticated(String uuid) {
-        PlayerCache playerCache = playerCacheMap.get(uuid);
-        return (playerCache != null && playerCache.isAuthenticated);
     }
 }

@@ -6,7 +6,7 @@ import com.mojang.brigadier.tree.LiteralCommandNode;
 import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
-import xyz.nikitacartes.easyauth.storage.PlayerCache;
+import xyz.nikitacartes.easyauth.storage.PlayerCacheV0;
 import xyz.nikitacartes.easyauth.utils.AuthHelper;
 import xyz.nikitacartes.easyauth.utils.PlayerAuth;
 
@@ -55,15 +55,15 @@ public class LoginCommand {
         }
         // Putting rest of the command in different thread to avoid lag spikes
         THREADPOOL.submit(() -> {
-            PlayerCache playerCache = playerCacheMap.get(uuid);
+            PlayerCacheV0 playerCacheV0 = playerCacheMap.get(uuid);
 
             long maxLoginTries = config.maxLoginTries;
-            AtomicInteger curLoginTries = playerCache.loginTries;
+            AtomicInteger curLoginTries = playerCacheV0.loginTries;
             AuthHelper.PasswordOptions passwordResult = AuthHelper.checkPassword(uuid, pass.toCharArray());
 
             if (passwordResult == AuthHelper.PasswordOptions.CORRECT) {
                 LogDebug("Player " + player.getName().getString() + "(" + uuid + ") provide correct password");
-                if (playerCache.lastKicked >= System.currentTimeMillis() - 1000 * config.resetLoginAttemptsTimeout) {
+                if (playerCacheV0.lastKicked >= System.currentTimeMillis() - 1000 * config.resetLoginAttemptsTimeout) {
                     LogDebug("Player " + player.getName().getString() + "(" + uuid + ") will be kicked due to kick timeout");
                     player.networkHandler.disconnect(langConfig.loginTriesExceeded.get());
                     return;
@@ -86,7 +86,7 @@ public class LoginCommand {
                 } else {
                     player.networkHandler.disconnect(langConfig.loginTriesExceeded.get());
                 }
-                playerCache.lastKicked = System.currentTimeMillis();
+                playerCacheV0.lastKicked = System.currentTimeMillis();
                 curLoginTries.set(0);
                 return;
             }

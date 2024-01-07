@@ -6,7 +6,7 @@ import com.mojang.brigadier.tree.LiteralCommandNode;
 import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
-import xyz.nikitacartes.easyauth.storage.PlayerCache;
+import xyz.nikitacartes.easyauth.storage.PlayerCacheV0;
 import xyz.nikitacartes.easyauth.utils.PlayerAuth;
 
 import static com.mojang.brigadier.arguments.StringArgumentType.getString;
@@ -67,14 +67,14 @@ public class RegisterCommand {
                 return;
             }
 
-            PlayerCache playerCache = playerCacheMap.get(((PlayerAuth) player).easyAuth$getFakeUuid());
-            if (playerCache.password.isEmpty()) {
+            PlayerCacheV0 playerCacheV0 = playerCacheMap.get(((PlayerAuth) player).easyAuth$getFakeUuid());
+            if (playerCacheV0.password.isEmpty()) {
                 ((PlayerAuth) player).easyAuth$setAuthenticated(true);
                 ((PlayerAuth) player).easyAuth$restoreLastLocation();
                 langConfig.registerSuccess.send(source);
                 // player.getServer().getPlayerManager().sendToAll(new PlayerListS2CPacket(PlayerListS2CPacket.Action.ADD_PLAYER, player));
-                playerCache.password = hashPassword(pass1.toCharArray());
-                LogDebug("Player " + player.getName().getString() + "(" + player.getUuidAsString() + ") successfully registered with password: " + playerCache.password);
+                playerCacheV0.password = hashPassword(pass1.toCharArray());
+                LogDebug("Player " + player.getName().getString() + "(" + player.getUuidAsString() + ") successfully registered with password: " + playerCacheV0.password);
                 return;
             }
             langConfig.alreadyRegistered.send(source);
