@@ -82,9 +82,9 @@ public abstract class PlayerManagerMixin {
 
             LogDebug(String.format("Teleporting player %s", ((PlayerAuth) player).easyAuth$getFakeUuid()));
 
-            NbtCompound nbtCompound = playerManager.loadPlayerData(player);
-            if(nbtCompound != null && nbtCompound.contains("RootVehicle", 10)) {
-                NbtCompound nbtCompound2 = nbtCompound.getCompound("RootVehicle");
+            Optional<NbtCompound> nbtCompound = playerManager.loadPlayerData(player);
+            if(nbtCompound.isPresent() && nbtCompound.get().contains("RootVehicle", 10)) {
+                NbtCompound nbtCompound2 = nbtCompound.get().getCompound("RootVehicle");
                 if (nbtCompound2.containsUuid("Attach")) {
                     cache.ridingEntityUUID = nbtCompound2.getUuid("Attach");
                 } else {
