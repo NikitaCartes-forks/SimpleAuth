@@ -1,6 +1,7 @@
 package xyz.nikitacartes.easyauth.mixin;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.scoreboard.ScoreboardCriterion;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -36,21 +37,36 @@ public abstract class ServerPlayerEntityMixin implements PlayerAuth {
     private long kickTimer = config.kickTimeout * 20;
 
     @Override
-    public void easyAuth$saveLastLocation() {
+    public void easyAuth$saveLastLocation(boolean saveDimension) {
         PlayerCacheV0 cache = playerCacheMap.get(this.easyAuth$getFakeUuid());
         if (cache == null) {
             LogDebug("Player cache is null, not saving position.");
             return;
         }
         // Saving position
-        cache.lastLocation.dimension = player.getServerWorld();
+        if (saveDimension) {
+            cache.lastLocation.dimension = player.getServerWorld();
+        }
         cache.lastLocation.position = player.getPos();
         cache.lastLocation.yaw = player.getYaw();
         cache.lastLocation.pitch = player.getPitch();
         cache.ridingEntityUUID = player.getVehicle() != null ? player.getVehicle().getUuid() : null;
         cache.wasDead = player.isDead();
         LogDebug(String.format("Saving position of player %s as %s", player.getName().getContent(), cache.lastLocation));
-        LogDebug(String.format("Saving vehicle of player %s as %s", player.getName().getContent(), cache.ridingEntityUUID));
+        if (cache.ridingEntityUUID != null) {
+            LogDebug(String.format("Saving vehicle of player %s as %s", player.getName().getContent(), cache.ridingEntityUUID));
+        }
+    }
+
+    @Override
+    public void easyAuth$saveLastDimension(RegistryKey<World> registryKey) {
+        PlayerCacheV0 cache = playerCacheMap.get(this.easyAuth$getFakeUuid());
+        if (cache == null) {
+            LogDebug("Player cache is null, not saving position.");
+            return;
+        }
+        // Saving position
+        cache.lastLocation.dimension = this.server.getWorld(registryKey);
     }
 
     @Override
@@ -70,7 +86,7 @@ public abstract class ServerPlayerEntityMixin implements PlayerAuth {
         }
         // Puts player to last cached position
         player.teleport(
-                cache.lastLocation.dimension,
+                cache.lastLocation.dimension == null ? server.getWorld(World.OVERWORLD) : cache.lastLocation.dimension,
                 cache.lastLocation.position.getX(),
                 cache.lastLocation.position.getY(),
                 cache.lastLocation.position.getZ(),
@@ -80,6 +96,7 @@ public abstract class ServerPlayerEntityMixin implements PlayerAuth {
 
         if (cache.ridingEntityUUID != null) {
             LogDebug(String.format("Mounting player to vehicle %s", cache.ridingEntityUUID));
+            if (cache.lastLocation.dimension == null) return;
             ServerWorld world = server.getWorld(cache.lastLocation.dimension.getRegistryKey());
             if (world == null) return;
             Entity entity = world.getEntity(cache.ridingEntityUUID);
