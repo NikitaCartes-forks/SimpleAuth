@@ -9,16 +9,14 @@ import net.minecraft.world.WorldSaveHandler;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Optional;
 
 import static xyz.nikitacartes.easyauth.EasyAuth.*;
 import static xyz.nikitacartes.easyauth.utils.EasyLogger.LogDebug;
@@ -30,62 +28,37 @@ public class WorldSaveHandlerMixin {
     @Shadow
     private File playerDataDir;
 
-    @Unique
-    private boolean fileExists;
-
     /**
-     * Saves whether player save file exists.
+     * Loads offline-uuid player data to compoundTag in order to migrate from offline to online.
      *
-     * @param playerEntity
      * @param cir
-     * @param compoundTag
-     * @param file
+     * @param mixinFile
      */
     @Inject(
-            method = "loadPlayerData(Lnet/minecraft/entity/player/PlayerEntity;)Lnet/minecraft/nbt/NbtCompound;",
+            method = "loadPlayerData(Lnet/minecraft/entity/player/PlayerEntity;Ljava/lang/String;)Ljava/util/Optional;",
             at = @At(
                     value = "INVOKE",
                     target = "Ljava/io/File;exists()Z"
             ),
-            locals = LocalCapture.CAPTURE_FAILHARD
-    )
-    private void fileExists(PlayerEntity playerEntity, CallbackInfoReturnable<NbtCompound> cir, NbtCompound compoundTag, File file) {
-        // @ModifyVariable cannot capture locals
-        this.fileExists = file.exists();
-    }
-
-    /**
-     * Loads offline-uuid player data to compoundTag in order to migrate from offline to online.
-     *
-     * @param compoundTag null compound tag.
-     * @param player      player who might need migration of data.
-     * @return compoundTag containing migrated data.
-     */
-    @ModifyVariable(
-            method = "loadPlayerData(Lnet/minecraft/entity/player/PlayerEntity;)Lnet/minecraft/nbt/NbtCompound;",
-            at = @At(
-                    value = "INVOKE",
-                    target = "Ljava/io/File;exists()Z"
-            )
-    )
-    private NbtCompound migratePlayerData(NbtCompound compoundTag, PlayerEntity player) {
-        // Checking for offline player data only if online doesn't exist yet
-        String playername = player.getGameProfile().getName().toLowerCase();
-        if (Boolean.parseBoolean(serverProp.getProperty("online-mode")) && mojangAccountNamesCache.contains(playername) && !this.fileExists) {
-            LogDebug(String.format("Migrating data for %s", playername));
-            File file = new File(this.playerDataDir, Uuids.getOfflinePlayerUuid(player.getGameProfile().getName()) + ".dat");
-            if (file.exists() && file.isFile())
-                try {
-                    compoundTag = NbtIo.readCompressed(new FileInputStream(file), NbtSizeTracker.ofUnlimitedBytes());
+            locals = LocalCapture.CAPTURE_FAILHARD,
+            cancellable = true)
+    private void fileExists(PlayerEntity player, String extension, CallbackInfoReturnable<Optional<NbtCompound>> cir, File mixinFile) {
+        if (!(mixinFile.exists() && mixinFile.isFile())) {
+            String playername = player.getGameProfile().getName().toLowerCase();
+            if (Boolean.parseBoolean(serverProp.getProperty("online-mode")) && mojangAccountNamesCache.contains(playername)) {
+                LogDebug(String.format("Migrating data for %s", playername));
+                File file = new File(this.playerDataDir, Uuids.getOfflinePlayerUuid(player.getGameProfile().getName()) + extension);
+                if (file.exists() && file.isFile()) try {
+                    cir.setReturnValue(Optional.of(NbtIo.readCompressed(file.toPath(), NbtSizeTracker.ofUnlimitedBytes())));
                 } catch (IOException e) {
                     LogWarn(String.format("Failed to load player data for: %s", playername));
                 }
-        } else {
-            LogDebug(
-                    String.format("Not migrating %s, as premium status is '%s' and data file is %s present.",
-                            playername, mojangAccountNamesCache.contains(playername), this.fileExists ? "" : "not")
-            );
+            } else {
+                LogDebug(
+                        String.format("Not migrating %s, as premium status is '%s' and data file is %s present.",
+                                playername, mojangAccountNamesCache.contains(playername), mixinFile.exists() && mixinFile.isFile() ? "" : "not")
+                );
+            }
         }
-        return compoundTag;
     }
 }
