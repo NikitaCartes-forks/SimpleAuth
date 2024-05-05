@@ -1,12 +1,15 @@
 package xyz.nikitacartes.easyauth.utils;
 
-import net.minecraft.text.Text;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.world.World;
 
 /**
  * PLayer authentication extension.
  */
 public interface PlayerAuth {
-    void easyAuth$saveLastLocation();
+    void easyAuth$saveLastLocation(boolean saveDimension);
+
+    void easyAuth$saveLastDimension(RegistryKey<World> registryKey);
 
     void easyAuth$restoreLastLocation();
 

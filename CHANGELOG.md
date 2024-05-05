@@ -1,8 +1,12 @@
+### 3.0.24
+##### Minecraft 1.20.5-1.20.6
+
+1) Fix spawning in wrong dimension with `hide-player-coords` enabled
+
 ### 3.0.23
 ##### Minecraft 1.20.5-1.20.6
 
 1) Fix `auth list`.
-
 
 ### 3.0.22-SNAPSHOT
 ##### Minecraft 1.20.3-1.20.4

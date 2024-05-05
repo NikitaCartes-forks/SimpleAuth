@@ -68,6 +68,7 @@ public abstract class PlayerManagerMixin {
             playerCacheMap.put(uuid, cache);
         }
         if (config.hidePlayerCoords && !(hasValidSession(player, connection))) {
+            ((PlayerAuth) player).easyAuth$saveLastDimension(world);
             return RegistryKey.of(RegistryKeys.WORLD, new Identifier(config.worldSpawn.dimension));
         }
         return world;
@@ -78,7 +79,7 @@ public abstract class PlayerManagerMixin {
     private void onPlayerConnect(Args args, ClientConnection connection, ServerPlayerEntity player, ConnectedClientData clientData) {
         if (config.hidePlayerCoords && !(hasValidSession(player, connection))) {
             PlayerCacheV0 cache = playerCacheMap.get(((PlayerAuth) player).easyAuth$getFakeUuid());
-            ((PlayerAuth) player).easyAuth$saveLastLocation();
+            ((PlayerAuth) player).easyAuth$saveLastLocation(false);
 
             LogDebug(String.format("Teleporting player %s", ((PlayerAuth) player).easyAuth$getFakeUuid()));
 
@@ -154,9 +155,7 @@ public abstract class PlayerManagerMixin {
     @Inject(method = "checkCanJoin(Ljava/net/SocketAddress;Lcom/mojang/authlib/GameProfile;)Lnet/minecraft/text/Text;", at = @At("HEAD"), cancellable = true)
     private void checkCanJoin(SocketAddress socketAddress, GameProfile profile, CallbackInfoReturnable<Text> cir) {
         // Getting the player that is trying to join the server
-        PlayerManager manager = (PlayerManager) (Object) this;
-
-        Text returnText = AuthEventHandler.checkCanPlayerJoinServer(profile, manager);
+        Text returnText = AuthEventHandler.checkCanPlayerJoinServer(profile, playerManager);
 
         if (returnText != null) {
             // Canceling player joining with the returnText message
