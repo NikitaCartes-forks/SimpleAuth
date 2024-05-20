@@ -23,7 +23,7 @@ public class LogoutCommand {
     private static int logout(ServerCommandSource serverCommandSource) throws CommandSyntaxException {
         ServerPlayerEntity player = serverCommandSource.getPlayerOrThrow();
 
-        if (((PlayerAuth) player).easyAuth$isAuthenticated()) {
+        if (((PlayerAuth) player).easyAuth$isAuthenticated() && !((PlayerAuth) player).easyAuth$canSkipAuth()) {
             // player.getServer().getPlayerManager().sendToAll(new PlayerListS2CPacket(PlayerListS2CPacket.Action.REMOVE_PLAYER, player));
             ((PlayerAuth) player).easyAuth$setAuthenticated(false);
             ((PlayerAuth) player).easyAuth$saveLastLocation(true);

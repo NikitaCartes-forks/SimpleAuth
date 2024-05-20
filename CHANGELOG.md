@@ -1,3 +1,8 @@
+### 3.0.25
+##### Minecraft 1.20.5-1.20.6
+
+1) Fix premium player being invulnerable after using `/logout` command
+
 ### 3.0.24
 ##### Minecraft 1.20.5-1.20.6
 
