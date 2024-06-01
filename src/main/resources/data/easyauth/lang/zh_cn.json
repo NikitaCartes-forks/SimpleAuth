@@ -32,4 +32,6 @@
   "text.easyauth.offlineUuid": "玩家%s的离线UUID是（点击以复制）\n",
   "text.easyauth.registeredPlayers": "已注册玩家列表：",
   "text.easyauth.addToForcedOffline": "玩家已成功加入到‘强制离线玩家’列表中。"
+  "text.easyauth.validSession": "§a你处在一个有效会话中。无需登录。",
+  "text.easyauth.onlinePlayerLogin": "§a你正在使用在线账号。无需登录。"
 }
