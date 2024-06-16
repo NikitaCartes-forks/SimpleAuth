@@ -13,7 +13,7 @@
     "ServerPlayerEntityMixin",
     "ServerPlayNetworkHandlerMixin",
     "SlotMixin",
-    "WorldSaveHandlerMixin"
+    "PlayerSaveHandlerMixin"
   ],
   "minVersion": "0.8",
   "injectors": {
