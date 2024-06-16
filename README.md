@@ -12,6 +12,12 @@ See [wiki](https://github.com/NikitaCartes/EasyAuth/wiki) for more information.
 
 [My Whitelist mod](https://github.com/NikitaCartes/EasyWhitelist), that changes whitelist behaviour from uuid-based to name-based, allowing it to be use at offline mode
 
+### Dependencies
+
+This mod requires:
+
+- `Fabric API` [CurseForge](https://www.curseforge.com/minecraft/mc-mods/fabric-api), [Modrinth](https://modrinth.com/mod/fabric-api)
+
 ### Contributors
 
 * Many thanks for @samolego, author of SimpleAuth, for his mod, and his permission on creating this fork
@@ -20,6 +26,7 @@ See [wiki](https://github.com/NikitaCartes/EasyAuth/wiki) for more information.
 * Thanks to @dmunozv04 for Floodgate support
 * Thanks to @Wereii for 1.19.3 support
 * Thanks to @martinszelcel for updating for new Mojang's API
+* Thanks to @Gamecraft007 for 1.21 support
 
 Thank you so much for those who have already helped with translation of the mod!
 
@@ -47,10 +54,3 @@ Libraries that the project is using:
 - `JNA (Apache 2 || LGPLv3)` https://github.com/java-native-access/jna
 
 This project licensed under the `MIT` license.
-
-### Dependencies
-
-This mod requires:
-
-- `Fabric API` [CurseForge](https://www.curseforge.com/minecraft/mc-mods/fabric-api)
-  , [Modrinth](https://modrinth.com/mod/fabric-api)
