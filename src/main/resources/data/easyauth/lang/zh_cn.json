@@ -29,7 +29,7 @@
   "text.easyauth.corruptedPlayerData": "§c你的用户数据似乎已经损坏。请联系管理员。",
   "text.easyauth.userNotRegistered": "§c该玩家未注册！",
   "text.easyauth.cannotLogout": "§c你不能登出！",
-  "text.easyauth.offlineUuid": "玩家%s的离线UUID是（点击以复制）\n",
+  "text.easyauth.offlineUuid": "玩家%s的离线UUID是（点击以复制）\n%s",
   "text.easyauth.registeredPlayers": "已注册玩家列表：",
   "text.easyauth.addToForcedOffline": "玩家已成功加入到‘强制离线玩家’列表中。",
   "text.easyauth.validSession": "§a您有一个有效的会话。无需登录。",
