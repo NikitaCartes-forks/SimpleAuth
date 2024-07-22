@@ -22,6 +22,8 @@ import xyz.nikitacartes.easyauth.event.AuthEventHandler;
 import xyz.nikitacartes.easyauth.storage.PlayerCacheV0;
 import xyz.nikitacartes.easyauth.utils.*;
 
+import java.util.Locale;
+
 import static xyz.nikitacartes.easyauth.EasyAuth.*;
 import static xyz.nikitacartes.easyauth.utils.EasyLogger.LogDebug;
 
@@ -126,7 +128,7 @@ public abstract class ServerPlayerEntityMixin implements PlayerAuth {
             Mimicking Mojang behaviour, where players cannot set their name to
             ExAmple if Example is already taken.
         */
-        String playername = player.getGameProfile().getName().toLowerCase();
+        String playername = player.getGameProfile().getName().toLowerCase(Locale.ENGLISH);
         return Uuids.getOfflinePlayerUuid(playername).toString();
 
     }
@@ -166,7 +168,7 @@ public abstract class ServerPlayerEntityMixin implements PlayerAuth {
      */
     @Override
     public boolean easyAuth$isUsingMojangAccount() {
-        return server.isOnlineMode() && mojangAccountNamesCache.contains(player.getGameProfile().getName().toLowerCase());
+        return server.isOnlineMode() && mojangAccountNamesCache.contains(player.getGameProfile().getName().toLowerCase(Locale.ENGLISH));
     }
 
     /**

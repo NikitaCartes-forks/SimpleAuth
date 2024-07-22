@@ -13,10 +13,10 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import javax.net.ssl.HttpsURLConnection;
-import java.io.File;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -55,7 +55,7 @@ public abstract class ServerLoginNetworkHandlerMixin {
     private void checkPremium(LoginHelloC2SPacket packet, CallbackInfo ci) {
         if (server.isOnlineMode()) {
             try {
-                String playername = packet.name().toLowerCase();
+                String playername = packet.name().toLowerCase(Locale.ENGLISH);
                 Pattern pattern = Pattern.compile("^[a-z0-9_]{3,16}$");
                 Matcher matcher = pattern.matcher(playername);
                 if (technicalConfig.forcedOfflinePlayers.contains(playername)) {

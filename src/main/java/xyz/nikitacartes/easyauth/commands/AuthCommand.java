@@ -316,7 +316,7 @@ public class AuthCommand {
      * @return 0
      */
     private static int getOfflineUuid(ServerCommandSource source, String player) {
-        UUID uuid = Uuids.getOfflinePlayerUuid(player.toLowerCase(Locale.ROOT));
+        UUID uuid = Uuids.getOfflinePlayerUuid(player.toLowerCase(Locale.ENGLISH));
 
         langConfig.offlineUuid.send(source, player, Text.literal("[" + uuid + "]").setStyle(Style.EMPTY
                 .withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, uuid.toString()))
@@ -360,8 +360,8 @@ public class AuthCommand {
      */
     private static int addPlayerToForcedOffline(ServerCommandSource source, String player) {
         THREADPOOL.submit(() -> {
-            technicalConfig.forcedOfflinePlayers.add(player.toLowerCase(Locale.ROOT));
-            technicalConfig.confirmedOnlinePlayers.remove(player.toLowerCase(Locale.ROOT));
+            technicalConfig.forcedOfflinePlayers.add(player.toLowerCase(Locale.ENGLISH));
+            technicalConfig.confirmedOnlinePlayers.remove(player.toLowerCase(Locale.ENGLISH));
             technicalConfig.save();
         });
 
