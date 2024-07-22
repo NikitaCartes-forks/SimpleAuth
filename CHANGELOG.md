@@ -1,4 +1,9 @@
 ### 3.0.25
+##### Minecraft 1.21
+
+1) Fix toLowerCase() using on PC with Turkish locale
+
+### 3.0.25
 ##### Minecraft 1.20.5-1.20.6, 1.21
 
 1) Fix premium player being invulnerable after using `/logout` command

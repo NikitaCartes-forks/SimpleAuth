@@ -16,6 +16,7 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Locale;
 import java.util.Optional;
 
 import static xyz.nikitacartes.easyauth.EasyAuth.*;
@@ -44,7 +45,7 @@ public class PlayerSaveHandlerMixin {
             cancellable = true)
     private void fileExists(PlayerEntity player, String extension, CallbackInfoReturnable<Optional<NbtCompound>> cir, File mixinFile) {
         if (!(mixinFile.exists() && mixinFile.isFile())) {
-            String playername = player.getGameProfile().getName().toLowerCase();
+            String playername = player.getGameProfile().getName().toLowerCase(Locale.ENGLISH);
             if (Boolean.parseBoolean(serverProp.getProperty("online-mode")) && mojangAccountNamesCache.contains(playername)) {
                 LogDebug(String.format("Migrating data for %s", playername));
                 File file = new File(this.playerDataDir, Uuids.getOfflinePlayerUuid(player.getGameProfile().getName()) + extension);
