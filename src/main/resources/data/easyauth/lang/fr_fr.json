@@ -28,5 +28,10 @@
   "text.easyauth.worldSpawnSet": "§aLe spawn pour la connection a été réglé avec succès.",
   "text.easyauth.corruptedPlayerData": "§cVos données sont probablement corrompus. Veuillez contacter un admin.",
   "text.easyauth.userNotRegistered": "§cCe joueur n'est pas enregistré !",
-  "text.easyauth.cannotLogout": "§cVous ne pouvez pas vous déconnecter !"
+  "text.easyauth.cannotLogout": "§cVous ne pouvez pas vous déconnecter !",
+  "text.easyauth.offlineUuid": "L'UUID hors ligne du joueur %s est (cliquer pour copier)\n",
+  "text.easyauth.registeredPlayers": "Liste des joueurs enregistrés :",
+  "text.easyauth.addToForcedOffline": "Joueur ajouté avec succès à la liste forcedOfflinePlayers",
+  "text.easyauth.validSession": "§aVous avez une session valide. Pas besoin de se connecter.",
+  "text.easyauth.onlinePlayerLogin": "§aVous utilisez un compte Mojang. Pas besoin de se connecter."
 }
