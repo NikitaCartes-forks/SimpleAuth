@@ -31,5 +31,7 @@
   "text.easyauth.cannotLogout": "§cВи не можете вийти з акаунту!",
   "text.easyauth.offlineUuid": "Оффлайновий UUID для гравця %s це (натисніть, щоб скопіювати)\n",
   "text.easyauth.registeredPlayers": "Список зареєстрованих гравців:",
-  "text.easyauth.addToForcedOffline": "Гравця успішно додано в список forcedOfflinePlayers"
+  "text.easyauth.addToForcedOffline": "Гравця успішно додано в список forcedOfflinePlayers",
+  "text.easyauth.validSession": "§aВаша сесія дійсна. Немає потреби авторизовуватись.",
+  "text.easyauth.onlinePlayerLogin": "§aВи використовуєте онлайн акаунт. Немає потреби авторизовуватись."
 }
