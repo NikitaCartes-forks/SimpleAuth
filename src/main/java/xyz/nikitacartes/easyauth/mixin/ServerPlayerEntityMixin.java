@@ -1,6 +1,8 @@
 package xyz.nikitacartes.easyauth.mixin;
 
+import com.google.common.net.InetAddresses;
 import net.minecraft.entity.Entity;
+import net.minecraft.network.ClientConnection;
 import net.minecraft.network.packet.s2c.play.PositionFlag;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.scoreboard.ScoreboardCriterion;
@@ -24,6 +26,8 @@ import xyz.nikitacartes.easyauth.event.AuthEventHandler;
 import xyz.nikitacartes.easyauth.storage.PlayerCacheV0;
 import xyz.nikitacartes.easyauth.utils.*;
 
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 import java.util.EnumSet;
 import java.util.Locale;
 
@@ -42,6 +46,9 @@ public abstract class ServerPlayerEntityMixin implements PlayerAuth {
     @Unique
     private long kickTimer = config.kickTimeout * 20;
 
+    @Unique
+    private String ipAddr = null;
+
     @Override
     public void easyAuth$saveLastLocation(boolean saveDimension) {
         PlayerCacheV0 cache = playerCacheMap.get(this.easyAuth$getFakeUuid());
@@ -58,9 +65,9 @@ public abstract class ServerPlayerEntityMixin implements PlayerAuth {
         cache.lastLocation.pitch = player.getPitch();
         cache.ridingEntityUUID = player.getVehicle() != null ? player.getVehicle().getUuid() : null;
         cache.wasDead = player.isDead();
-        LogDebug(String.format("Saving position of player %s as %s", player.getName().getContent(), cache.lastLocation));
+        LogDebug(String.format("Saving position of player %s as %s", player.getNameForScoreboard(), cache.lastLocation));
         if (cache.ridingEntityUUID != null) {
-            LogDebug(String.format("Saving vehicle of player %s as %s", player.getName().getContent(), cache.ridingEntityUUID));
+            LogDebug(String.format("Saving vehicle of player %s as %s", player.getNameForScoreboard(), cache.ridingEntityUUID));
         }
     }
 
@@ -100,7 +107,7 @@ public abstract class ServerPlayerEntityMixin implements PlayerAuth {
                 cache.lastLocation.yaw,
                 cache.lastLocation.pitch,
                 true);
-        LogDebug(String.format("Teleported player %s to %s", player.getName().getContent(), cache.lastLocation));
+        LogDebug(String.format("Teleported player %s to %s", player.getNameForScoreboard(), cache.lastLocation));
 
         if (cache.ridingEntityUUID != null) {
             LogDebug(String.format("Mounting player to vehicle %s", cache.ridingEntityUUID));
@@ -111,7 +118,7 @@ public abstract class ServerPlayerEntityMixin implements PlayerAuth {
             if (entity != null) {
                 player.startRiding(entity, true);
             } else {
-                LogDebug("Could not find vehicle for player " + player.getName().getContent());
+                LogDebug("Could not find vehicle for player " + player.getNameForScoreboard());
             }
         }
     }
@@ -260,5 +267,14 @@ public abstract class ServerPlayerEntityMixin implements PlayerAuth {
             return true;
         }
         return instance.hasVehicle();
+    }
+
+    public String easyAuth$getIpAddress() {
+        return ipAddr;
+    }
+
+    public void easyAuth$setIpAddress(ClientConnection connection) {
+        SocketAddress socketAddress = connection.getAddress();
+        ipAddr = socketAddress instanceof InetSocketAddress inetSocketAddress ? InetAddresses.toAddrString(inetSocketAddress.getAddress()) : "<unknown>";
     }
 }

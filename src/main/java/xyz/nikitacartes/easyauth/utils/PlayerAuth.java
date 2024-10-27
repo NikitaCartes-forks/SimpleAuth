@@ -1,5 +1,6 @@
 package xyz.nikitacartes.easyauth.utils;
 
+import net.minecraft.network.ClientConnection;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.world.World;
 
@@ -63,4 +64,18 @@ public interface PlayerAuth {
      * @return true if paid, false if cracked
      */
     boolean easyAuth$isUsingMojangAccount();
+
+    /**
+     * Gets the player's IP address on connection step.
+     *
+     * @return player's IP address as string
+     */
+    String easyAuth$getIpAddress();
+
+    /**
+     * Sets the player's IP address on connection step.
+     *
+     * @param ClientConnection connection
+     */
+    void easyAuth$setIpAddress(ClientConnection connection);
 }

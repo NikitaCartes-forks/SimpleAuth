@@ -69,7 +69,7 @@ public class AuthHelper {
 
     public static boolean hasValidSession(ServerPlayerEntity player) {
         String uuid = ((PlayerAuth) player).easyAuth$getFakeUuid();
-        String playerIp = player.getIp();
+        String playerIp = ((PlayerAuth) player).easyAuth$getIpAddress();
         return ((PlayerAuth) player).easyAuth$canSkipAuth() ||
                 (playerCacheMap.containsKey(uuid) &&
                         playerCacheMap.get(uuid).isAuthenticated &&
