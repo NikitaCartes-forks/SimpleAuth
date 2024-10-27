@@ -47,9 +47,9 @@ public class LoginCommand {
         // Getting the player who send the command
         ServerPlayerEntity player = source.getPlayerOrThrow();
         String uuid = ((PlayerAuth) player).easyAuth$getFakeUuid();
-        LogDebug("Player " + player.getName().getString() + "(" + uuid + ") is trying to login");
+        LogDebug("Player " + player.getNameForScoreboard() + "{" + uuid + "} is trying to login");
         if (((PlayerAuth) player).easyAuth$isAuthenticated()) {
-            LogDebug("Player " + player.getName().getString() + "(" + uuid + ") is already authenticated");
+            LogDebug("Player " + player.getNameForScoreboard() + "{" + uuid + "} is already authenticated");
             langConfig.alreadyAuthenticated.send(source);
             return 0;
         }
@@ -62,9 +62,9 @@ public class LoginCommand {
             AuthHelper.PasswordOptions passwordResult = AuthHelper.checkPassword(uuid, pass.toCharArray());
 
             if (passwordResult == AuthHelper.PasswordOptions.CORRECT) {
-                LogDebug("Player " + player.getName().getString() + "(" + uuid + ") provide correct password");
+                LogDebug("Player " + player.getNameForScoreboard() + "{" + uuid + "} provide correct password");
                 if (playerCacheV0.lastKicked >= System.currentTimeMillis() - 1000 * config.resetLoginAttemptsTimeout) {
-                    LogDebug("Player " + player.getName().getString() + "(" + uuid + ") will be kicked due to kick timeout");
+                    LogDebug("Player " + player.getNameForScoreboard() + "{" + uuid + "} will be kicked due to kick timeout");
                     player.networkHandler.disconnect(langConfig.loginTriesExceeded.get());
                     return;
                 }
@@ -75,11 +75,11 @@ public class LoginCommand {
                 // player.getServer().getPlayerManager().sendToAll(new PlayerListS2CPacket(PlayerListS2CPacket.Action.ADD_PLAYER, player));
                 return;
             } else if (passwordResult == AuthHelper.PasswordOptions.NOT_REGISTERED) {
-                LogDebug("Player " + player.getName().getString() + "(" + uuid + ") is not registered");
+                LogDebug("Player " + player.getNameForScoreboard() + "{" + uuid + "} is not registered");
                 langConfig.registerRequired.send(source);
                 return;
             } else if (curLoginTries.incrementAndGet() == maxLoginTries && maxLoginTries != -1) { // Player exceeded maxLoginTries
-                LogDebug("Player " + player.getName().getString() + "(" + uuid + ") exceeded max login tries");
+                LogDebug("Player " + player.getNameForScoreboard() + "{" + uuid + "} exceeded max login tries");
                 // Send the player a different error message if the max login tries is 1.
                 if (maxLoginTries == 1) {
                     player.networkHandler.disconnect(langConfig.wrongPassword.get());
@@ -90,7 +90,7 @@ public class LoginCommand {
                 curLoginTries.set(0);
                 return;
             }
-            LogDebug("Player " + player.getName().getString() + "(" + uuid + ") provided wrong password");
+            LogDebug("Player " + player.getNameForScoreboard() + "{" + uuid + "} provided wrong password");
             // Sending wrong pass message
             langConfig.wrongPassword.send(source);
         });

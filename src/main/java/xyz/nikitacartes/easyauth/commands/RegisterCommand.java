@@ -74,7 +74,7 @@ public class RegisterCommand {
                 langConfig.registerSuccess.send(source);
                 // player.getServer().getPlayerManager().sendToAll(new PlayerListS2CPacket(PlayerListS2CPacket.Action.ADD_PLAYER, player));
                 playerCacheV0.password = hashPassword(pass1.toCharArray());
-                LogDebug("Player " + player.getName().getString() + "(" + player.getUuidAsString() + ") successfully registered with password: " + playerCacheV0.password);
+                LogDebug("Player " + player.getNameForScoreboard() + "{" + player.getUuidAsString() + "} successfully registered with password: " + playerCacheV0.password);
                 return;
             }
             langConfig.alreadyRegistered.send(source);

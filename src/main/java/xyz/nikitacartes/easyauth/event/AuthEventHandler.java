@@ -53,7 +53,7 @@ public class AuthEventHandler {
             // Player needs to be kicked, since there's already a player with that name
             // playing on the server
 
-            return langConfig.playerAlreadyOnline.get(onlinePlayer.getName());
+            return langConfig.playerAlreadyOnline.get(onlinePlayer.getNameForScoreboard());
         } else if (!(matcher.matches() || (technicalConfig.floodgateLoaded && extendedConfig.floodgateBypassRegex && FloodgateApiHelper.isFloodgatePlayer(profile.getId())))) {
             return langConfig.disallowedUsername.get(extendedConfig.usernameRegexp);
         }
@@ -164,11 +164,11 @@ public class AuthEventHandler {
         if (!((PlayerAuth) player).easyAuth$isAuthenticated()) {
             for (String allowedCommand : extendedConfig.allowedCommands) {
                 if (command.startsWith(allowedCommand)) {
-                    LogDebug("Player " + player.getName() + " executed command " + command + " without being authenticated.");
+                    LogDebug("Player " + player.getNameForScoreboard() + " executed command " + command + " without being authenticated.");
                     return ActionResult.PASS;
                 }
             }
-            LogDebug("Player " + player.getName() + " tried to execute command " + command + " without being authenticated.");
+            LogDebug("Player " + player.getNameForScoreboard() + " tried to execute command " + command + " without being authenticated.");
             ((PlayerAuth) player).easyAuth$sendAuthMessage();
             return ActionResult.FAIL;
         }

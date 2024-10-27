@@ -95,7 +95,7 @@ public abstract class PlayerManagerMixin {
                 }
             }
 
-            LogDebug(String.format("Spawn position of player %s is %s", player.getName(), config.worldSpawn));
+            LogDebug(String.format("Spawn position of player %s is %s", player.getNameForScoreboard(), config.worldSpawn));
 
             args.set(0, config.worldSpawn.x);
             args.set(1, config.worldSpawn.y);
