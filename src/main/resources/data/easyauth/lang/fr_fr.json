@@ -29,7 +29,7 @@
   "text.easyauth.corruptedPlayerData": "§cVos données sont probablement corrompus. Veuillez contacter un admin.",
   "text.easyauth.userNotRegistered": "§cCe joueur n'est pas enregistré !",
   "text.easyauth.cannotLogout": "§cVous ne pouvez pas vous déconnecter !",
-  "text.easyauth.offlineUuid": "L'UUID hors ligne du joueur %s est (cliquer pour copier)\n",
+  "text.easyauth.offlineUuid": "L'UUID hors ligne du joueur %s est (cliquer pour copier)\n%s",
   "text.easyauth.registeredPlayers": "Liste des joueurs enregistrés :",
   "text.easyauth.addToForcedOffline": "Joueur ajouté avec succès à la liste forcedOfflinePlayers",
   "text.easyauth.validSession": "§aVous avez une session valide. Pas besoin de se connecter.",
