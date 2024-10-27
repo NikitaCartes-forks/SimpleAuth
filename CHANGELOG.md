@@ -1,5 +1,5 @@
 ### 3.0.25
-##### Minecraft 1.21
+##### Minecraft 1.21-1.21.3
 
 1) Fix toLowerCase() using on PC with Turkish locale
 

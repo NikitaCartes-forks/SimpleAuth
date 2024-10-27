@@ -68,7 +68,7 @@ public abstract class PlayerManagerMixin {
             cache = PlayerCacheV0.fromJson(player, uuid);
             playerCacheMap.put(uuid, cache);
         }
-        if (config.hidePlayerCoords && !(hasValidSession(player, connection))) {
+        if (config.hidePlayerCoords && !(hasValidSession(player))) {
             ((PlayerAuth) player).easyAuth$saveLastDimension(world);
             return RegistryKey.of(RegistryKeys.WORLD, Identifier.of(config.worldSpawn.dimension));
         }
@@ -78,7 +78,7 @@ public abstract class PlayerManagerMixin {
     @ModifyArgs(method = "onPlayerConnect(Lnet/minecraft/network/ClientConnection;Lnet/minecraft/server/network/ServerPlayerEntity;Lnet/minecraft/server/network/ConnectedClientData;)V",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayNetworkHandler;requestTeleport(DDDFF)V"))
     private void onPlayerConnect(Args args, ClientConnection connection, ServerPlayerEntity player, ConnectedClientData clientData) {
-        if (config.hidePlayerCoords && !(hasValidSession(player, connection))) {
+        if (config.hidePlayerCoords && !(hasValidSession(player))) {
             PlayerCacheV0 cache = playerCacheMap.get(((PlayerAuth) player).easyAuth$getFakeUuid());
             ((PlayerAuth) player).easyAuth$saveLastLocation(false);
 
@@ -115,24 +115,6 @@ public abstract class PlayerManagerMixin {
             );
         }
         return player.getRespawnTarget(alive, postDimensionTransition);
-    }
-
-    @Redirect(method = "onPlayerConnect(Lnet/minecraft/network/ClientConnection;Lnet/minecraft/server/network/ServerPlayerEntity;Lnet/minecraft/server/network/ConnectedClientData;)V",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerEntity;startRiding(Lnet/minecraft/entity/Entity;Z)Z"))
-    private boolean onPlayerConnectStartRiding(ServerPlayerEntity instance, Entity entity, boolean force, ClientConnection connection, ServerPlayerEntity player, ConnectedClientData clientData) {
-        if (config.hidePlayerCoords && !(hasValidSession(player, connection))) {
-            return false;
-        }
-        return instance.startRiding(entity, force);
-    }
-
-    @Redirect(method = "onPlayerConnect(Lnet/minecraft/network/ClientConnection;Lnet/minecraft/server/network/ServerPlayerEntity;Lnet/minecraft/server/network/ConnectedClientData;)V",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerEntity;hasVehicle()Z"))
-    private boolean onPlayerConnectStartRiding(ServerPlayerEntity instance, ClientConnection connection, ServerPlayerEntity player, ConnectedClientData clientData) {
-        if (config.hidePlayerCoords && !(hasValidSession(player, connection))) {
-            return true;
-        }
-        return instance.hasVehicle();
     }
 
     @Inject(method = "remove(Lnet/minecraft/server/network/ServerPlayerEntity;)V", at = @At("HEAD"))

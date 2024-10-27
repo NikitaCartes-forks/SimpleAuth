@@ -1,6 +1,7 @@
 package xyz.nikitacartes.easyauth.mixin;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.network.packet.s2c.play.PositionFlag;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.scoreboard.ScoreboardCriterion;
 import net.minecraft.server.MinecraftServer;
@@ -16,15 +17,18 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import xyz.nikitacartes.easyauth.event.AuthEventHandler;
 import xyz.nikitacartes.easyauth.storage.PlayerCacheV0;
 import xyz.nikitacartes.easyauth.utils.*;
 
+import java.util.EnumSet;
 import java.util.Locale;
 
 import static xyz.nikitacartes.easyauth.EasyAuth.*;
+import static xyz.nikitacartes.easyauth.utils.AuthHelper.hasValidSession;
 import static xyz.nikitacartes.easyauth.utils.EasyLogger.LogDebug;
 
 @Mixin(ServerPlayerEntity.class)
@@ -82,7 +86,7 @@ public abstract class ServerPlayerEntityMixin implements PlayerAuth {
             return;
         }
         if (cache.wasDead) {
-            player.kill();
+            player.kill(player.getServerWorld());
             player.getScoreboard().forEachScore(ScoreboardCriterion.DEATH_COUNT, player, (score) -> score.setScore(score.getScore() - 1));
             return;
         }
@@ -92,8 +96,10 @@ public abstract class ServerPlayerEntityMixin implements PlayerAuth {
                 cache.lastLocation.position.getX(),
                 cache.lastLocation.position.getY(),
                 cache.lastLocation.position.getZ(),
+                EnumSet.noneOf(PositionFlag.class),
                 cache.lastLocation.yaw,
-                cache.lastLocation.pitch);
+                cache.lastLocation.pitch,
+                true);
         LogDebug(String.format("Teleported player %s to %s", player.getName().getContent(), cache.lastLocation));
 
         if (cache.ridingEntityUUID != null) {
@@ -236,5 +242,23 @@ public abstract class ServerPlayerEntityMixin implements PlayerAuth {
         if (result == ActionResult.FAIL) {
             cir.setReturnValue(false);
         }
+    }
+
+    @Redirect(method = "readRootVehicle(Ljava/util/Optional;)V",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerEntity;startRiding(Lnet/minecraft/entity/Entity;Z)Z"))
+    private boolean onPlayerConnectStartRiding(ServerPlayerEntity instance, Entity entity, boolean force) {
+        if (config.hidePlayerCoords && !(hasValidSession(player))) {
+            return false;
+        }
+        return instance.startRiding(entity, force);
+    }
+
+    @Redirect(method = "readRootVehicle(Ljava/util/Optional;)V",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerEntity;hasVehicle()Z"))
+    private boolean onPlayerConnectStartRiding(ServerPlayerEntity instance) {
+        if (config.hidePlayerCoords && !(hasValidSession(player))) {
+            return true;
+        }
+        return instance.hasVehicle();
     }
 }

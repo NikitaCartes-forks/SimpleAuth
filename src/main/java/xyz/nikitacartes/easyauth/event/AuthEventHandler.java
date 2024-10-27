@@ -5,7 +5,6 @@ import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerLoginNetworking;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
 import net.minecraft.network.packet.s2c.play.BlockUpdateS2CPacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.PlayerManager;
@@ -13,7 +12,6 @@ import net.minecraft.server.network.ServerLoginNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.Uuids;
 import net.minecraft.util.math.BlockPos;
 import xyz.nikitacartes.easyauth.storage.PlayerCacheV0;
@@ -222,13 +220,13 @@ public class AuthEventHandler {
     }
 
     // Using an item
-    public static TypedActionResult<ItemStack> onUseItem(PlayerEntity player) {
+    public static ActionResult onUseItem(PlayerEntity player) {
         if (!((PlayerAuth) player).easyAuth$isAuthenticated() && !extendedConfig.allowItemUsing) {
             ((PlayerAuth) player).easyAuth$sendAuthMessage();
-            return TypedActionResult.fail(ItemStack.EMPTY);
+            return ActionResult.FAIL;
         }
 
-        return TypedActionResult.pass(ItemStack.EMPTY);
+        return ActionResult.PASS;
     }
 
     // Dropping an item

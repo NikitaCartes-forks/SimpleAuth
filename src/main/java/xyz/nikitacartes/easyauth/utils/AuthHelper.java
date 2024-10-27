@@ -67,10 +67,9 @@ public class AuthHelper {
         NOT_REGISTERED
     }
 
-    public static boolean hasValidSession(ServerPlayerEntity player, ClientConnection connection) {
+    public static boolean hasValidSession(ServerPlayerEntity player) {
         String uuid = ((PlayerAuth) player).easyAuth$getFakeUuid();
-        SocketAddress socketAddress = connection.getAddress();
-        String playerIp = socketAddress instanceof InetSocketAddress inetSocketAddress ? InetAddresses.toAddrString(inetSocketAddress.getAddress()) : "<unknown>";
+        String playerIp = player.getIp();
         return ((PlayerAuth) player).easyAuth$canSkipAuth() ||
                 (playerCacheMap.containsKey(uuid) &&
                         playerCacheMap.get(uuid).isAuthenticated &&
