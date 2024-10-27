@@ -1,3 +1,12 @@
+### 3.0.26
+##### Minecraft 1.21.2, 1.21.3
+
+1) Update Simplified Chinese translation, thanks to @CMJNB and @MyBlueHorizon
+2) Update French translation, thanks to @Sky-NiniKo
+3) Update Ukrainian translation, thanks to @Y0shioSato
+4) Fix uuid wasn't clickable in chat in some languages
+5) Fix connection bug
+
 ### 3.0.25
 ##### Minecraft 1.21-1.21.3
 

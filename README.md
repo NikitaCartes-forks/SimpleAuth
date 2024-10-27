@@ -30,18 +30,18 @@ This mod requires:
 
 Thank you so much for those who have already helped with translation of the mod!
 
-* @alphatoasterous (Russian)
-* @Neubulae, @GodGun968, @Sam5440 (Chinese)
-* @Zailer43 (Spanish)
-* @Kljunas2 (Slovene)
-* @Bendimester23 (Hungarian)
-* @luizffgv (Brazilian Portuguese)
-* @Uxzylon (French)
-* @DavidCZ2051, @Thewest123 (Czech)
-* @egeesin (Turkish)
-* @txlbr (Ukrainian)
-* @LimakXRobczuk (Polish)
-* @Rizzo1812 (Italian)
+* Russian: @alphatoasterous
+* Chinese: @Neubulae, @GodGun968, @Sam5440, @CMJNB, @MyBlueHorizon
+* Spanish: @Zailer43
+* Slovene: @Kljunas2
+* Hungarian: @Bendimester23
+* Brazilian Portuguese: @luizffgv
+* French: @Uxzylon, @Sky-NiniKo
+* Czech: @DavidCZ2051, @Thewest123
+* Turkish: @egeesin
+* Ukrainian: @txlbr, @Y0shioSato
+* Polish: @LimakXRobczuk
+* Italian: @Rizzo1812
 
 ### License
 
