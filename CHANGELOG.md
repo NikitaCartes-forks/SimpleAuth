@@ -1,3 +1,8 @@
+### 3.0.27
+##### Minecraft 1.21.2, 1.21.3
+
+1) Fix session issue for real this time
+
 ### 3.0.26
 ##### Minecraft 1.21.2, 1.21.3
 
