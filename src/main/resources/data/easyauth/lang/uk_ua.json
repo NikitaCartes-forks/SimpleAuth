@@ -29,7 +29,7 @@
   "text.easyauth.corruptedPlayerData": "§cСхоже, що ваші дані для авторизації пошкоджені. Зв'яжіться з адміністратором.",
   "text.easyauth.userNotRegistered": "§cЦей гравець не зареєстрований!",
   "text.easyauth.cannotLogout": "§cВи не можете вийти з акаунту!",
-  "text.easyauth.offlineUuid": "Оффлайновий UUID для гравця %s це (натисніть, щоб скопіювати)\n",
+  "text.easyauth.offlineUuid": "Оффлайновий UUID для гравця %s це (натисніть, щоб скопіювати)\n%s",
   "text.easyauth.registeredPlayers": "Список зареєстрованих гравців:",
   "text.easyauth.addToForcedOffline": "Гравця успішно додано в список forcedOfflinePlayers"
 }
