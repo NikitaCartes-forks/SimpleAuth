@@ -1,5 +1,10 @@
+### 3.0.28
+##### Minecraft 1.21.2 - 1.21.4
+
+1) Fix [#164](https://github.com/NikitaCartes/EasyAuth/issues/164), incompatibility with C2ME and hide player coords
+
 ### 3.0.27
-##### Minecraft 1.21.2, 1.21.3
+##### Minecraft 1.21.2 - 1.21.4
 
 1) Fix session issue for real this time
 

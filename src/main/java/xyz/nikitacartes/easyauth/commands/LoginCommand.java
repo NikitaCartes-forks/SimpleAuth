@@ -53,47 +53,44 @@ public class LoginCommand {
             langConfig.alreadyAuthenticated.send(source);
             return 0;
         }
-        // Putting rest of the command in different thread to avoid lag spikes
-        THREADPOOL.submit(() -> {
-            PlayerCacheV0 playerCacheV0 = playerCacheMap.get(uuid);
+        PlayerCacheV0 playerCacheV0 = playerCacheMap.get(uuid);
 
-            long maxLoginTries = config.maxLoginTries;
-            AtomicInteger curLoginTries = playerCacheV0.loginTries;
-            AuthHelper.PasswordOptions passwordResult = AuthHelper.checkPassword(uuid, pass.toCharArray());
+        long maxLoginTries = config.maxLoginTries;
+        AtomicInteger curLoginTries = playerCacheV0.loginTries;
+        AuthHelper.PasswordOptions passwordResult = AuthHelper.checkPassword(uuid, pass.toCharArray());
 
-            if (passwordResult == AuthHelper.PasswordOptions.CORRECT) {
-                LogDebug("Player " + player.getNameForScoreboard() + "{" + uuid + "} provide correct password");
-                if (playerCacheV0.lastKicked >= System.currentTimeMillis() - 1000 * config.resetLoginAttemptsTimeout) {
-                    LogDebug("Player " + player.getNameForScoreboard() + "{" + uuid + "} will be kicked due to kick timeout");
-                    player.networkHandler.disconnect(langConfig.loginTriesExceeded.get());
-                    return;
-                }
-                langConfig.successfullyAuthenticated.send(source);
-                ((PlayerAuth) player).easyAuth$setAuthenticated(true);
-                ((PlayerAuth) player).easyAuth$restoreLastLocation();
-                curLoginTries.set(0);
-                // player.getServer().getPlayerManager().sendToAll(new PlayerListS2CPacket(PlayerListS2CPacket.Action.ADD_PLAYER, player));
-                return;
-            } else if (passwordResult == AuthHelper.PasswordOptions.NOT_REGISTERED) {
-                LogDebug("Player " + player.getNameForScoreboard() + "{" + uuid + "} is not registered");
-                langConfig.registerRequired.send(source);
-                return;
-            } else if (curLoginTries.incrementAndGet() == maxLoginTries && maxLoginTries != -1) { // Player exceeded maxLoginTries
-                LogDebug("Player " + player.getNameForScoreboard() + "{" + uuid + "} exceeded max login tries");
-                // Send the player a different error message if the max login tries is 1.
-                if (maxLoginTries == 1) {
-                    player.networkHandler.disconnect(langConfig.wrongPassword.get());
-                } else {
-                    player.networkHandler.disconnect(langConfig.loginTriesExceeded.get());
-                }
-                playerCacheV0.lastKicked = System.currentTimeMillis();
-                curLoginTries.set(0);
-                return;
+        if (passwordResult == AuthHelper.PasswordOptions.CORRECT) {
+            LogDebug("Player " + player.getNameForScoreboard() + "{" + uuid + "} provide correct password");
+            if (playerCacheV0.lastKicked >= System.currentTimeMillis() - 1000 * config.resetLoginAttemptsTimeout) {
+                LogDebug("Player " + player.getNameForScoreboard() + "{" + uuid + "} will be kicked due to kick timeout");
+                player.networkHandler.disconnect(langConfig.loginTriesExceeded.get());
+                return 0;
             }
-            LogDebug("Player " + player.getNameForScoreboard() + "{" + uuid + "} provided wrong password");
-            // Sending wrong pass message
-            langConfig.wrongPassword.send(source);
-        });
+            langConfig.successfullyAuthenticated.send(source);
+            ((PlayerAuth) player).easyAuth$setAuthenticated(true);
+            ((PlayerAuth) player).easyAuth$restoreLastLocation();
+            curLoginTries.set(0);
+            // player.getServer().getPlayerManager().sendToAll(new PlayerListS2CPacket(PlayerListS2CPacket.Action.ADD_PLAYER, player));
+            return 0;
+        } else if (passwordResult == AuthHelper.PasswordOptions.NOT_REGISTERED) {
+            LogDebug("Player " + player.getNameForScoreboard() + "{" + uuid + "} is not registered");
+            langConfig.registerRequired.send(source);
+            return 0;
+        } else if (curLoginTries.incrementAndGet() == maxLoginTries && maxLoginTries != -1) { // Player exceeded maxLoginTries
+            LogDebug("Player " + player.getNameForScoreboard() + "{" + uuid + "} exceeded max login tries");
+            // Send the player a different error message if the max login tries is 1.
+            if (maxLoginTries == 1) {
+                player.networkHandler.disconnect(langConfig.wrongPassword.get());
+            } else {
+                player.networkHandler.disconnect(langConfig.loginTriesExceeded.get());
+            }
+            playerCacheV0.lastKicked = System.currentTimeMillis();
+            curLoginTries.set(0);
+            return 0;
+        }
+        LogDebug("Player " + player.getNameForScoreboard() + "{" + uuid + "} provided wrong password");
+        // Sending wrong pass message
+        langConfig.wrongPassword.send(source);
         return 0;
     }
 }

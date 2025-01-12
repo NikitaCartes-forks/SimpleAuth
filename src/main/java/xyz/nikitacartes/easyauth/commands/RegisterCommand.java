@@ -57,28 +57,26 @@ public class RegisterCommand {
             langConfig.matchPassword.send(source);
             return 0;
         }
-        // Different thread to avoid lag spikes
-        THREADPOOL.submit(() -> {
-            if (pass1.length() < extendedConfig.minPasswordLength) {
-                langConfig.minPasswordChars.send(source);
-                return;
-            } else if (pass1.length() > extendedConfig.maxPasswordLength && extendedConfig.maxPasswordLength != -1) {
-                langConfig.maxPasswordChars.send(source);
-                return;
-            }
 
-            PlayerCacheV0 playerCacheV0 = playerCacheMap.get(((PlayerAuth) player).easyAuth$getFakeUuid());
-            if (playerCacheV0.password.isEmpty()) {
-                ((PlayerAuth) player).easyAuth$setAuthenticated(true);
-                ((PlayerAuth) player).easyAuth$restoreLastLocation();
-                langConfig.registerSuccess.send(source);
-                // player.getServer().getPlayerManager().sendToAll(new PlayerListS2CPacket(PlayerListS2CPacket.Action.ADD_PLAYER, player));
-                playerCacheV0.password = hashPassword(pass1.toCharArray());
-                LogDebug("Player " + player.getNameForScoreboard() + "{" + player.getUuidAsString() + "} successfully registered with password: " + playerCacheV0.password);
-                return;
-            }
-            langConfig.alreadyRegistered.send(source);
-        });
+        if (pass1.length() < extendedConfig.minPasswordLength) {
+            langConfig.minPasswordChars.send(source);
+            return 0;
+        } else if (pass1.length() > extendedConfig.maxPasswordLength && extendedConfig.maxPasswordLength != -1) {
+            langConfig.maxPasswordChars.send(source);
+            return 0;
+        }
+
+        PlayerCacheV0 playerCacheV0 = playerCacheMap.get(((PlayerAuth) player).easyAuth$getFakeUuid());
+        if (playerCacheV0.password.isEmpty()) {
+            ((PlayerAuth) player).easyAuth$setAuthenticated(true);
+            ((PlayerAuth) player).easyAuth$restoreLastLocation();
+            langConfig.registerSuccess.send(source);
+            // player.getServer().getPlayerManager().sendToAll(new PlayerListS2CPacket(PlayerListS2CPacket.Action.ADD_PLAYER, player));
+            playerCacheV0.password = hashPassword(pass1.toCharArray());
+            LogDebug("Player " + player.getNameForScoreboard() + "{" + player.getUuidAsString() + "} successfully registered with password: " + playerCacheV0.password);
+            return 0;
+        }
+        langConfig.alreadyRegistered.send(source);
         return 0;
     }
 }

@@ -90,16 +90,16 @@ public class AccountCommand {
             langConfig.cannotChangePassword.send(source);
             return 0;
         }
+        if (newPass.length() < extendedConfig.minPasswordLength) {
+            langConfig.minPasswordChars.send(source);
+            return 0;
+        } else if (newPass.length() > extendedConfig.maxPasswordLength && extendedConfig.maxPasswordLength != -1) {
+            langConfig.maxPasswordChars.send(source);
+            return 0;
+        }
         // Different thread to avoid lag spikes
         THREADPOOL.submit(() -> {
             if (AuthHelper.checkPassword(((PlayerAuth) player).easyAuth$getFakeUuid(), oldPass.toCharArray()) == AuthHelper.PasswordOptions.CORRECT) {
-                if (newPass.length() < extendedConfig.minPasswordLength) {
-                    langConfig.minPasswordChars.send(source);
-                    return;
-                } else if (newPass.length() > extendedConfig.maxPasswordLength && extendedConfig.maxPasswordLength != -1) {
-                    langConfig.maxPasswordChars.send(source);
-                    return;
-                }
                 // Changing password in playercache
                 playerCacheMap.get(((PlayerAuth) player).easyAuth$getFakeUuid()).password = AuthHelper.hashPassword(newPass.toCharArray());
                 langConfig.passwordUpdated.send(source);

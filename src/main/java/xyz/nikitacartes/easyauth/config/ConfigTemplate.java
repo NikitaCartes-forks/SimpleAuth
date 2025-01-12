@@ -1,12 +1,12 @@
 package xyz.nikitacartes.easyauth.config;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.spongepowered.configurate.ConfigurateException;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.hocon.HoconConfigurationLoader;
 import org.spongepowered.configurate.serialize.SerializationException;
 import org.spongepowered.configurate.serialize.TypeSerializer;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
