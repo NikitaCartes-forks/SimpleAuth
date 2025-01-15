@@ -31,5 +31,7 @@
   "text.easyauth.cannotLogout": "§cÇıkış yapamazsın!",
   "text.easyauth.offlineUuid": "%s adlı oyuncunun çevrimdışı UUID'si (kopyalamak için tıkla)\n%s",
   "text.easyauth.registeredPlayers": "Kayıtlı oyuncuların listesi:",
-  "text.easyauth.addToForcedOffline": "Oyuncu başarılı bir şekilde forcedOfflinePlayers (Çevrimdışıya Zorlanan Oyuncular) listesine eklendi"
+  "text.easyauth.addToForcedOffline": "Oyuncu başarılı bir şekilde forcedOfflinePlayers (Çevrimdışıya Zorlanan Oyuncular) listesine eklendi",
+  "text.easyauth.validSession": "§aGeçerli bir oturumun var. Giriş yapmana gerek yok.",
+  "text.easyauth.onlinePlayerLogin": "§aÇevrimiçi bir hesap kullanıyorsun. Giriş yapmana gerek yok."
 }
